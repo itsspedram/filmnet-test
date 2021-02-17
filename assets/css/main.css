@@ -2,3 +2,8 @@ body {
   background-color: #1a202c;
   color: #e2e8f0;
 }
+table,
+th,
+td {
+  border: 1px solid #e2e8f0;
+}
