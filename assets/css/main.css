@@ -3,11 +3,13 @@ body {
   color: #e2e8f0;
 }
 table,
-td {
+td,
+tr,
+th {
   border: 1px solid #e2e8f0;
 }
-th{border: 1px solid #1a202c;}
 thead {
+  border: 1px solid #e2e8f0;
   background-color: #3eaf7c;
   color: #1a202c;
 }

@@ -11,11 +11,11 @@
       <table id="myTable" class="table text-white text-center">
         <thead>
           <tr>
-            <th scope="col">avtar</th>
-            <th scope="col">first name</th>
-            <th scope="col">last name</th>
-            <th scope="col">email</th>
-            <th colspan="2">edit / delete</th>
+            <th scope="col">User Image</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Email</th>
+            <th>Options</th>
           </tr>
         </thead>
         <tbody>
@@ -30,108 +30,143 @@
                 v-b-modal.modal-2
                 @click="editUserForm(index)"
               >
-                edit
+                Edit
               </button>
               <button
                 v-b-modal.modal-3
-                @click="removeUserRequest(index)"
+                @click="deleteUserRequest(index)"
                 class="btn btn-danger"
               >
-                delete
+                Delete
               </button>
             </td>
           </tr>
         </tbody>
       </table>
       <button class="btn btn-success" @click="emptyAddUser()" v-b-modal.modal-1>
-        add user
+        Add User
       </button>
     </div>
     <div>
-      <b-modal hide-footer ref="modal" id="modal-1">
+      <b-modal hide-footer hide-header ref="modal" id="modal-1">
         <div class="text-dark">
-          <h1 class="text-center">add user</h1>
+          <h3 class="text-center">Add User</h3>
           <div class="form-group">
-            <label for="exampleInputEmail1">first name</label>
-            <input type="text" class="form-control" v-model="new_first_name" />
+            <label for="new_first_name">First name</label>
+            <input
+              id="new_first_name"
+              type="text"
+              class="form-control"
+              v-model="new_first_name"
+            />
           </div>
           <div class="form-group">
-            <label for="exampleInputEmail1">Last name</label>
-            <input type="text" class="form-control" v-model="new_last_name" />
+            <label for="new_last_name">Last name</label>
+            <input
+              id="new_last_name"
+              type="text"
+              class="form-control"
+              v-model="new_last_name"
+            />
           </div>
           <div class="form-group">
-            <label for="exampleInputEmail1">Email address</label>
-            <input type="email" class="form-control" v-model="new_email" />
+            <label for="new_email_addres">Email Address</label>
+            <input
+              id="new_email_addres"
+              type="email"
+              class="form-control"
+              v-model="new_email"
+            />
           </div>
-
-          <button
-            :disabled="
-              new_first_name == '' || new_email == '' || new_last_name == ''
-            "
-            type="submit"
-            class="btn btn-primary"
-            @click="adduser(), hideModal()"
-          >
-            Add New User
-          </button>
+          <dir class="text-center">
+            <button
+              :disabled="
+                new_first_name == '' || new_email == '' || new_last_name == ''
+              "
+              class="btn btn-success"
+              @click="addUser(), hideModal()"
+            >
+              Add New User
+            </button>
+            <button @click="hideModal()" class="btn btn-secondary">
+              cansel
+            </button>
+          </dir>
         </div>
       </b-modal>
     </div>
     <div>
-      <b-modal hide-footer ref="modal" id="modal-2">
+      <b-modal hide-footer hide-header ref="modal" id="modal-2">
         <div class="text-dark">
-          <h1 class="text-center">edit user</h1>
+          <h3 class="text-center">Edit User</h3>
           <div class="form-group">
-            <label for="exampleInputEmail1">avatar src: </label>
-            <input type="text" class="form-control" v-model="edited_avatar" />
+            <label for="edited_User_Image">User Image src: </label>
+            <input
+              id="edited_User_Image"
+              type="text"
+              class="form-control"
+              v-model="edited_avatar"
+            />
           </div>
           <div class="form-group">
-            <label for="exampleInputEmail1">first name:</label>
+            <label for="edited_first_name">first name:</label>
             <input
+              id="edited_first_name"
               type="text"
               class="form-control"
               v-model="edited_first_name"
             />
           </div>
           <div class="form-group">
-            <label for="exampleInputEmail1">Last name:</label>
+            <label for="edited_last_name">Last name:</label>
             <input
+              id="edited_last_name"
               type="text"
               class="form-control"
               v-model="edited_last_name"
             />
           </div>
           <div class="form-group">
-            <label for="exampleInputEmail1">Email address</label>
-            <input type="email" class="form-control" v-model="edited_email" />
+            <label for="edited_email">Email address</label>
+            <input
+              id="edited_email"
+              type="email"
+              class="form-control"
+              v-model="edited_email"
+            />
           </div>
-
-          <button
-            :disabled="
-              edited_avatar == '' ||
-              edited_first_name == '' ||
-              edited_last_name == '' ||
-              edited_email == ''
-            "
-            class="btn btn-primary"
-            @click="editUser(), hideModal()"
-          >
-            Save changes
-          </button>
+          <div class="text-center">
+            <button
+              :disabled="
+                edited_avatar == '' ||
+                edited_first_name == '' ||
+                edited_last_name == '' ||
+                edited_email == ''
+              "
+              class="btn btn-success"
+              @click="editUser(), hideModal()"
+            >
+              Save changes
+            </button>
+            <button @click="hideModal()" class="btn btn-secondary">
+              cansel
+            </button>
+          </div>
         </div>
       </b-modal>
     </div>
     <div>
-      <b-modal hide-footer ref="modal" id="modal-3">
+      <b-modal hide-footer hide-header ref="modal" id="modal-3">
         <div class="text-center">
-          <h5 class="text-danger">Are you sure about removing</h5>
-          <h5 class="text-dark mb-5">
-            {{ remove_first_name }} {{ remove_last_name }}
-          </h5>
-          <button @click="hideModal(), removeUser()" class="btn btn-success">
-            yes
+          <h3 class="text-danger">Are you sure ?</h3>
+          <p class="text-dark mb-5">
+            you will not be able to recover
+            {{ remove_first_name }} {{ remove_last_name }}!
+          </p>
+          <button @click="hideModal(), deleteUser()" class="btn btn-danger">
+            yes delete it !
           </button>
-          <button @click="hideModal()" class="btn btn-danger">no</button>
+          <button @click="hideModal()" class="btn btn-secondary">cansel</button>
         </div>
       </b-modal>
     </div>
@@ -146,7 +181,6 @@ export default {
       new_first_name: "",
       new_last_name: "",
       new_email: "",
-      edited_user_id: 0,
       edited_first_name: "",
       edited_last_name: "",
       edited_email: "",
@@ -162,6 +196,7 @@ export default {
     this.listOfUsers();
   },
   computed: {
+    //filter for searching
     filterSearch() {
       console.log(this.users);
       return this.users.filter((user) => {
@@ -181,7 +216,7 @@ export default {
     hideModal() {
       this.$refs["modal"].hide();
     },
-
+    //get list of Users
     listOfUsers() {
       var self = this;
       this.$axios
@@ -196,14 +231,14 @@ export default {
           console.log(error);
         });
     },
-
+    //empty add user form
     emptyAddUser() {
       this.new_first_name = "";
       this.new_last_name = "";
       this.new_email = "";
     },
-    
-    adduser() {
+    // add a new user to the list
+    addUser() {
       let new_user = {};
       new_user.first_name = this.new_first_name;
       new_user.last_name = this.new_last_name;
@@ -213,14 +248,18 @@ export default {
       this.new_last_name = "";
       this.new_email = "";
     },
-    removeUserRequest(index) {
+    // pass data of selected user to delete alert
+    deleteUserRequest(index) {
       this.remove_User_index = index;
       this.remove_first_name = this.users[index].first_name;
       this.remove_last_name = this.users[index].last_name;
     },
-    removeUser() {
+    //delete selected user
+    deleteUser() {
       this.users.splice(this.remove_User_index, 1);
     },
+
+    // pass data of selected user to edit form
     editUserForm(index) {
       this.edited_avatar = this.users[index].avatar;
       this.edited_first_name = this.users[index].first_name;
@@ -229,6 +268,7 @@ export default {
       this.edited_index = index;
     },
 
+    //edit the selected user
     editUser() {
       this.users[this.edited_index].first_name = this.edited_first_name;
       this.users[this.edited_index].last_name = this.edited_last_name;
@@ -243,5 +283,3 @@ export default {
 };
 </script>
 
-<style>
-</style>
