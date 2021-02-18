@@ -2,13 +2,12 @@
   <div>
     <div class="container">
       <input
+        class="form-control my-3"
         type="text"
         id="myInput"
         v-model="search_box"
-        placeholder="Search for names.."
-        title="Type in a name"
+        placeholder="Search for users.."
       />
-
       <table id="myTable" class="table text-white text-center">
         <thead>
           <tr>
@@ -20,40 +19,41 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(user, index) in users" :key="user.id">
+          <tr v-for="(user, index) in filterSearch" :key="user.id">
             <td><img class="w-25" :src="user.avatar" alt="" /></td>
             <td>{{ user.first_name }}</td>
             <td>{{ user.last_name }}</td>
             <td>{{ user.email }}</td>
             <td>
               <button
+                class="btn btn-primary"
                 v-b-modal.modal-2
-                @click="
-                  editUserForm(
-                    user.avatar,
-                    user.first_name,
-                    user.last_name,
-                    user.email,
-                    index
-                  )
-                "
+                @click="editUserForm(index)"
               >
                 edit
               </button>
-              <button @click="removeUser(index)">delete</button>
+              <button
+                v-b-modal.modal-3
+                @click="removeUserRequest(index)"
+                class="btn btn-danger"
+              >
+                delete
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
-      <button class="btn btn-success" v-b-modal.modal-1>add user</button>
+      <button class="btn btn-success" @click="emptyAddUser()" v-b-modal.modal-1>
+        add user
+      </button>
     </div>
     <div>
-      <b-modal hide-footer ref="modal-1" id="modal-1">
+      <b-modal hide-footer ref="modal" id="modal-1">
         <div class="text-dark">
           <h1 class="text-center">add user</h1>
           <div class="form-group">
             <label for="exampleInputEmail1">first name</label>
-            <input type="text" class="form-control" v-model="new_name" />
+            <input type="text" class="form-control" v-model="new_first_name" />
           </div>
           <div class="form-group">
             <label for="exampleInputEmail1">Last name</label>
@@ -65,10 +65,12 @@
           </div>
 
           <button
-            :disabled="new_name == '' || new_email == '' || new_last_name == ''"
+            :disabled="
+              new_first_name == '' || new_email == '' || new_last_name == ''
+            "
             type="submit"
             class="btn btn-primary"
-            @click="adduser(), hideModalAddUsers()"
+            @click="adduser(), hideModal()"
           >
             Add New User
           </button>
@@ -76,15 +78,15 @@
       </b-modal>
     </div>
     <div>
-      <b-modal hide-footer ref="modal-2" id="modal-2">
+      <b-modal hide-footer ref="modal" id="modal-2">
         <div class="text-dark">
           <h1 class="text-center">edit user</h1>
           <div class="form-group">
-            <label for="exampleInputEmail1">avatar </label>
+            <label for="exampleInputEmail1">avatar src: </label>
             <input type="text" class="form-control" v-model="edited_avatar" />
           </div>
           <div class="form-group">
-            <label for="exampleInputEmail1">first name</label>
+            <label for="exampleInputEmail1">first name:</label>
             <input
               type="text"
               class="form-control"
@@ -92,7 +94,7 @@
             />
           </div>
           <div class="form-group">
-            <label for="exampleInputEmail1">Last name</label>
+            <label for="exampleInputEmail1">Last name:</label>
             <input
               type="text"
               class="form-control"
@@ -112,10 +114,24 @@
               edited_email == ''
             "
             class="btn btn-primary"
-            @click="editUser(), hideModaleditUsers()"
+            @click="editUser(), hideModal()"
           >
             Save changes
           </button>
+        </div>
+      </b-modal>
+    </div>
+    <div>
+      <b-modal hide-footer ref="modal" id="modal-3">
+        <div class="text-center">
+          <h5 class="text-danger">Are you sure about removing</h5>
+          <h5 class="text-dark mb-5">
+            {{ remove_first_name }} {{ remove_last_name }}
+          </h5>
+          <button @click="hideModal(), removeUser()" class="btn btn-success">
+            yes
+          </button>
+          <button @click="hideModal()" class="btn btn-danger">no</button>
         </div>
       </b-modal>
     </div>
@@ -123,25 +139,22 @@
 </template>
 
 <script>
-// vue.filter("filterSearch", function () {
-//   return this.users.filter((user) => {
-//     return user.first_name.match(this.search_box);
-//   });
-// });
 export default {
   data() {
     return {
-      users: "",
-      new_name: "",
+      users: [],
+      new_first_name: "",
       new_last_name: "",
       new_email: "",
-      remove_user_id: 0,
       edited_user_id: 0,
       edited_first_name: "",
       edited_last_name: "",
       edited_email: "",
       edited_avatar: "",
       edited_index: 0,
+      remove_User_index: 0,
+      remove_first_name: "",
+      remove_last_name: "",
       search_box: "",
     };
   },
@@ -149,27 +162,33 @@ export default {
     this.listOfUsers();
   },
   computed: {
-    // filterSearch: function () {
-    //   return this.users.filter((user) => {
-    //     return user.first_name.match(this.search_box);
-    //   });
-    // },
+    filterSearch() {
+      console.log(this.users);
+      return this.users.filter((user) => {
+        return (
+          user.first_name
+            .toLowerCase()
+            .includes(this.search_box.toLowerCase()) ||
+          user.last_name
+            .toLowerCase()
+            .includes(this.search_box.toLowerCase()) ||
+          user.email.toLowerCase().includes(this.search_box.toLowerCase())
+        );
+      });
+    },
   },
   methods: {
-    hideModalAddUsers() {
-      this.$refs["modal-1"].hide();
+    hideModal() {
+      this.$refs["modal"].hide();
     },
-    hideModaleditUsers() {
-      this.$refs["modal-2"].hide();
-    },
+
     listOfUsers() {
       var self = this;
       this.$axios
         .$get("/users?page=1")
         .then(function (response) {
           // handle success
-          console.log(response);
-          //   self.users.push(response.data);
+
           self.users = response.data;
         })
         .catch(function (error) {
@@ -177,28 +196,36 @@ export default {
           console.log(error);
         });
     },
-    adduser() {
-      let new_user = {};
-      //new_user.push('"first_name"' + ":" + this.add_name);
-      new_user.first_name = this.new_name;
-      //   new_user.push('"last_name"' + ":" + this.new_last_name);
-      new_user.last_name = this.new_last_name;
 
-      //   new_user.push('"email"' + ":" + this.new_email);
-      new_user.email = this.new_email;
-      this.users.push(new_user);
-      this.new_name = "";
+    emptyAddUser() {
+      this.new_first_name = "";
       this.new_last_name = "";
       this.new_email = "";
     },
-    removeUser(indexOf) {
-      this.users.splice(indexOf, 1);
+    
+    adduser() {
+      let new_user = {};
+      new_user.first_name = this.new_first_name;
+      new_user.last_name = this.new_last_name;
+      new_user.email = this.new_email;
+      this.users.push(new_user);
+      this.new_first_name = "";
+      this.new_last_name = "";
+      this.new_email = "";
     },
-    editUserForm(avatar, first_name, last_name, email, index) {
-      this.edited_avatar = avatar;
-      this.edited_first_name = first_name;
-      this.edited_last_name = last_name;
-      this.edited_email = email;
+    removeUserRequest(index) {
+      this.remove_User_index = index;
+      this.remove_first_name = this.users[index].first_name;
+      this.remove_last_name = this.users[index].last_name;
+    },
+    removeUser() {
+      this.users.splice(this.remove_User_index, 1);
+    },
+    editUserForm(index) {
+      this.edited_avatar = this.users[index].avatar;
+      this.edited_first_name = this.users[index].first_name;
+      this.edited_last_name = this.users[index].last_name;
+      this.edited_email = this.users[index].email;
       this.edited_index = index;
     },
 
